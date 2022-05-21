@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8" />
+<head>
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"/>
+ <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<style>
+ #map {
+ width: 90vw;
+ height: 90vh;
+ margin-left: 5vw;
+ margin-top: 5vh;
+ box-shadow: 5px 5px 5px #888;
+ }
+ .info {
+padding: 6px 8px;
+font: 14px/16px Arial, Helvetica, sans-serif;
+background: white;
+background: rgba(255,255,255,0.8);
+box-shadow: 0 0 15px rgba(0,0,0,0.2);
+border-radius: 5px;
+}
+.info h2 {
+margin: 0 0 5px;
+color: #777;
+}
+</style>
+
+
+</head>
+ <body>
+ <div id="map"></div>
+<script>
+var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+ attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'+ 'contributors',
+maxZoom: 18
+});
+
+
+
+
+var rios = L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
+ layers: 'rios',
+ format: 'image/png',
+ transparent: true,
+ attribution: "Centro Nacional de Registros"
+});
+var cerros = L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
+ layers: 'cerros',
+ format: 'image/png',
+ transparent: true,
+ attribution: "Centro Nacional de Registros"
+});
+var municipios = L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
+ layers: 'municipios',
+ format: 'image/png',
+ transparent: true,
+ attribution: "Centro Nacional de Registros"
+});
+//Añadimos los dos objetos
+var baseMaps = {
+ "OpenStreetMap": osm
+};
+var overlayMaps = {
+"municipios": municipios,
+"cerros": cerros,
+"rios": rios,
+  
+ };
+
+//Creamos el mapa
+var map = L.map('map', {
+center: new L.LatLng(13.65, -89.17),
+zoom: 10,
+//Añadimos las capas al mapa
+layers: [osm,municipios,cerros, rios]
+});
+
+
+// Insertando un título en el mapa
+var title = L.control();
+title.onAdd = function (map) {
+ var div = L.DomUtil.create('div', 'info');
+ div.innerHTML +=
+ '<h2>Tarea Practica 2 Informatica</h2>';
+ return div;
+};
+title.addTo(map);
+
+
+
+//creamos el control de capas y lo añadimos al mapa
+L.control.layers(baseMaps, overlayMaps, {collapsed:false}).addTo(map);
+</script>
+</body>
+</html>
